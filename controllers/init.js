@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 
 export const initRepo = async () => {
-  const repoPath = path.resolve(process.cwd(), ".gitTracker");
+  const repoPath = path.resolve(process.cwd(), ".gitForge");
   const commitPath = path.join(repoPath, "commits");
 
   try {
