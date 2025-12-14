@@ -3,7 +3,7 @@ import path from "path";
 
 export const addRepo = async (filePath) => {
   const repoPath = path.resolve(process.cwd(), ".gitForge");
-  const stagingPath = path.join(repoPath, "stage");
+  const stagingPath = path.join(repoPath, "staged");
 
   try {
     await fs.mkdir(stagingPath, { recursive: true });
