@@ -50,3 +50,5 @@ yargs(hideBin(process.argv))
   )
   .demandCommand(1, "Atleast one command is needed")
   .help().argv;
+
+console.log("AWS KEY:", process.env.AWS_ACCESS_KEY_ID ? "LOADED" : "MISSING");
