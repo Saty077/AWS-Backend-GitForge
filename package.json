@@ -11,8 +11,12 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1693.0",
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "http": "^0.0.1-security",
+    "mongoose": "^9.0.2",
     "uuid": "^13.0.0",
     "yargs": "^18.0.0"
   }
