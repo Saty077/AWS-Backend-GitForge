@@ -8,6 +8,7 @@ import { pushRepo } from "./controllers/push.js";
 import { revertRepo } from "./controllers/revert.js";
 
 yargs(hideBin(process.argv))
+  .command("start", "Starts the new server", {}, startServer)
   .command("init", "Initialize the repository", {}, initRepo)
   .command(
     "add <file>",
@@ -52,3 +53,7 @@ yargs(hideBin(process.argv))
   )
   .demandCommand(1, "Atleast one command is needed")
   .help().argv;
+
+function startServer() {
+  console.log("StartServer function is called");
+}
