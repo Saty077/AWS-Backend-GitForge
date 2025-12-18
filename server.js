@@ -1,4 +1,10 @@
 import yargs from "yargs";
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import { configDotenv } from "dotenv";
+
 import { hideBin } from "yargs/helpers";
 import { initRepo } from "./controllers/init.js";
 import { addRepo } from "./controllers/add.js";
@@ -6,6 +12,8 @@ import { commitRepo } from "./controllers/commit.js";
 import { pullRepo } from "./controllers/pull.js";
 import { pushRepo } from "./controllers/push.js";
 import { revertRepo } from "./controllers/revert.js";
+
+configDotenv();
 
 yargs(hideBin(process.argv))
   .command("start", "Starts the new server", {}, startServer)
@@ -55,5 +63,15 @@ yargs(hideBin(process.argv))
   .help().argv;
 
 function startServer() {
-  console.log("StartServer function is called");
+  const app = express();
+  const port = process.env.PORT || 3000;
+
+  app.use(express.json());
+
+  const MongoURI = process.env.MONGO_URL;
+
+  mongoose
+    .connect(MongoURI)
+    .then(() => console.log("Connected to DB"))
+    .catch((err) => console.error("Error connecting to DB", err));
 }
