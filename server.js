@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
 import { Server } from "socket.io";
 import http from "http";
+import mainRouter from "./routes/main.Router.js";
 
 import { hideBin } from "yargs/helpers";
 import { initRepo } from "./controllers/init.js";
@@ -82,9 +83,7 @@ function startServer() {
     .then(() => console.log("Connected to DB"))
     .catch((err) => console.error("Error connecting to DB", err));
 
-  app.get("/", (req, res) => {
-    res.send("Welcome!");
-  });
+  app.use("/", mainRouter);
 
   const userId = "user1";
   const httpServer = http.createServer(app);
