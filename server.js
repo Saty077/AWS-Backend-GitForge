@@ -4,6 +4,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
+import { Server } from "socket.io";
+import http from "http";
 
 import { hideBin } from "yargs/helpers";
 import { initRepo } from "./controllers/init.js";
@@ -67,6 +69,11 @@ function startServer() {
   const port = process.env.PORT || 3000;
 
   app.use(express.json());
+  app.use(
+    cors({
+      origin: "*",
+    })
+  );
 
   const MongoURI = process.env.MONGO_URL;
 
@@ -74,4 +81,38 @@ function startServer() {
     .connect(MongoURI)
     .then(() => console.log("Connected to DB"))
     .catch((err) => console.error("Error connecting to DB", err));
+
+  app.get("/", (req, res) => {
+    res.send("Welcome!");
+  });
+
+  const userId = "user1";
+  const httpServer = http.createServer(app);
+  const io = new Server(
+    httpServer,
+    cors({
+      origin: "*",
+      methods: ["GET", "POST"],
+    })
+  );
+
+  io.on("connection", (socket) => {
+    socket.on("joinRoom", (userId) => {
+      const user = userId;
+      console.log("+++++++++");
+      console.log(user);
+      console.log("+++++++++");
+      socket.join(userId);
+    });
+  });
+
+  const db = mongoose.connection;
+
+  db.once("open", async () => {
+    console.log("CRUD operation called");
+  });
+
+  httpServer.listen(port, () => {
+    console.log(`Server listening to port: ${port}`);
+  });
 }
