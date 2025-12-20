@@ -11,15 +11,15 @@ import {
   updateRepositoryById,
 } from "../controllers/repoController.js";
 
-const repoRoute = Router();
+const repoRouter = Router();
 
-repoRoute.post("/repo/create", createRepository);
-repoRoute.get("/repo/getAll", getAllRepositories);
-repoRoute.get("/repo/:id", getRepositoryById);
-repoRoute.get("/repo/:name", getRepositoryByName);
-repoRoute.get("/repo/:userId", getCurrentUserRepository);
-repoRoute.put("/repo/update/:id", updateRepositoryById);
-repoRoute.delete("/repo/delete/:id", deleteRepositoryById);
-repoRoute.patch("/repo/toggle/:id", toggleRepositoryById);
+repoRouter.post("/repo/create", createRepository);
+repoRouter.get("/repo/all", getAllRepositories);
+repoRouter.get("/repo/:id", getRepositoryById);
+repoRouter.get("/repo/:name", getRepositoryByName);
+repoRouter.get("/repo/:userId", getCurrentUserRepository);
+repoRouter.put("/repo/update/:id", updateRepositoryById);
+repoRouter.delete("/repo/delete/:id", deleteRepositoryById);
+repoRouter.patch("/repo/toggle/:id", toggleRepositoryById);
 
-export default repoRoute;
+export default repoRouter;
