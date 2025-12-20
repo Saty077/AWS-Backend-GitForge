@@ -1,12 +1,14 @@
 import express from "express";
 import { Router } from "express";
-import userRoute from "./userRoutes.js";
-import repoRoute from "./repoRoutes.js";
+import issueRouter from "./issueRoutes.js";
+import repoRouter from "./repoRoutes.js";
+import userRouter from "./userRoutes.js";
 
 const mainRouter = Router();
 
-mainRouter.use(userRoute);
-mainRouter.use(repoRoute);
+mainRouter.use(userRouter);
+mainRouter.use(repoRouter);
+mainRouter.use(issueRouter);
 
 mainRouter.get("/", (req, res) => {
   res.send("Welcome home!");

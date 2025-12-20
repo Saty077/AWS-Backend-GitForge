@@ -9,13 +9,13 @@ import {
   updateUserProfile,
 } from "../controllers/userController.js";
 
-const userRoute = Router();
+const userRouter = Router();
 
-userRoute.get("/getAllUsers", getAllUsers);
-userRoute.post("/signup", signUp);
-userRoute.post("/login", login);
-userRoute.get("/getUserProfile", getUserProfile);
-userRoute.put("/updateUserProfile", updateUserProfile);
-userRoute.delete("/deleteUserProfile", deleteUserProfile);
+userRouter.get("/getAllUsers", getAllUsers);
+userRouter.post("/signup", signUp);
+userRouter.post("/login", login);
+userRouter.get("/getUserProfile", getUserProfile);
+userRouter.put("/updateUserProfile", updateUserProfile);
+userRouter.delete("/deleteUserProfile", deleteUserProfile);
 
-export default userRoute;
+export default userRouter;
