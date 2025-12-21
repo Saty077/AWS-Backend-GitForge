@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import { MongoClient } from "mongodb";
 import { configDotenv } from "dotenv";
 import httpStatus from "http-status";
+import { ObjectId } from "mongodb";
+
 configDotenv();
 
 let client;
@@ -53,7 +55,7 @@ export const signUp = async (req, res) => {
     console.error("Error occured while signing up", err.message);
     res
       .status(httpStatus.INTERNAL_SERVER_ERROR)
-      .json("something went wrong during signup");
+      .json({ message: "something went wrong during signup" });
   }
 };
 
@@ -88,16 +90,57 @@ export const login = async (req, res) => {
 
     res.send({ token, usreId: user._id });
   } catch (err) {
-    console.error("Error logging in:", err.message);
+    console.error("Error logging in: ", err.message);
+    res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Something went wrong Logging in!" });
   }
 };
 
 export const getAllUsers = async (req, res) => {
-  res.send("getAllUsers called");
+  try {
+    await connectClient();
+    const db = await client.db("gitForgeDB");
+    const userCollection = await db.collection("users");
+
+    const allUsers = await userCollection.find({}).toArray();
+    if (!allUsers)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "No user found!" });
+
+    res.json({ users: allUsers });
+  } catch (err) {
+    console.log("Error logging in: ", err.message);
+    res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Something went wrong while fetching all users!" });
+  }
 };
 
 export const getUserProfile = async (req, res) => {
-  res.send("getUserProfile called");
+  const currId = req.params.id;
+  try {
+    await connectClient();
+    const db = client.db("gitForgeDB");
+    const userCollection = db.collection("users");
+
+    const user = await userCollection.findOne({
+      _id: new ObjectId(currId),
+    });
+
+    if (!user)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "User not found" });
+
+    res.status(httpStatus.OK).json(user, { message: "user fetched" });
+  } catch (err) {
+    console.error("Something went wrong in getUserProfile", err.message);
+    res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: "Something went wrong while fetching all users!" });
+  }
 };
 export const updateUserProfile = async (req, res) => {
   res.send("updateUserProfile called");
