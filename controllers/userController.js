@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { MongoClient } from "mongodb";
 import { configDotenv } from "dotenv";
+import httpStatus from "http-status";
 configDotenv();
 
 let client;
@@ -24,7 +25,10 @@ export const signUp = async (req, res) => {
 
     const user = await userCollection.findOne({ username });
 
-    if (user) return res.status(400).json({ message: "user already exists" });
+    if (user)
+      return res
+        .status(httpStatus.FOUND)
+        .json({ message: "user already exists" });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -47,7 +51,44 @@ export const signUp = async (req, res) => {
     res.json({ token });
   } catch (err) {
     console.error("Error occured while signing up", err.message);
-    res.status(500).json("something went wrong during signup");
+    res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json("something went wrong during signup");
+  }
+};
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    await connectClient();
+    const db = client.db("gitForgeDB");
+    const userCollection = db.collection("users");
+
+    if (!email || !password) {
+      return res.json({ message: "Please enter username and password" });
+    }
+
+    const user = await userCollection.findOne({ email });
+
+    if (!user)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "User not found" });
+
+    const auth = await bcrypt.compare(password, user.password);
+
+    if (!auth)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Invalid Credentials" });
+
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    res.send({ token, usreId: user._id });
+  } catch (err) {
+    console.error("Error logging in:", err.message);
   }
 };
 
@@ -55,9 +96,6 @@ export const getAllUsers = async (req, res) => {
   res.send("getAllUsers called");
 };
 
-export const login = async (req, res) => {
-  res.send("login called");
-};
 export const getUserProfile = async (req, res) => {
   res.send("getUserProfile called");
 };
