@@ -143,7 +143,43 @@ export const getUserProfile = async (req, res) => {
   }
 };
 export const updateUserProfile = async (req, res) => {
-  res.send("updateUserProfile called");
+  const currId = req.params.id;
+  const { email, password } = req.body;
+  try {
+    await connectClient();
+    const db = client.db("gitForgeDB");
+    const userCollection = db.collection("users");
+
+    const updateFields = {};
+
+    if (email) updateFields.email = email;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updateFields.password = await bcrypt.hash(password, salt);
+    }
+
+    const result = await userCollection.findOneAndUpdate(
+      {
+        _id: new ObjectId(currId),
+      },
+      { $set: updateFields },
+      { returnDocument: "after" }
+    );
+
+    if (!result) {
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "User not found" });
+    }
+
+    res.status(httpStatus.OK).json(result);
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error(
+      "something went wrong while updating user profile",
+      err.message
+    );
+  }
 };
 export const deleteUserProfile = async (req, res) => {
   res.send("deleteUserProfile called");
