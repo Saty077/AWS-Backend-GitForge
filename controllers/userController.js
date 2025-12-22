@@ -182,5 +182,24 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 export const deleteUserProfile = async (req, res) => {
-  res.send("deleteUserProfile called");
+  const currId = req.params.id;
+  try {
+    await connectClient();
+    const db = client.db("gitForgeDB");
+    const userCollection = db.collection("users");
+
+    const user = await userCollection.findOneAndDelete({
+      _id: new ObjectId(currId),
+    });
+
+    if (!user)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "User not found!" });
+
+    res.status(httpStatus.OK).json({ message: "user deleted successfully!" });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Something went wrong while deleting", err.message);
+  }
 };
