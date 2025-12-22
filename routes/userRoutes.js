@@ -15,7 +15,7 @@ userRouter.get("/getAllUsers", getAllUsers);
 userRouter.post("/signup", signUp);
 userRouter.post("/login", login);
 userRouter.get("/getUserProfile/:id", getUserProfile);
-userRouter.put("/updateUserProfile", updateUserProfile);
-userRouter.delete("/deleteUserProfile", deleteUserProfile);
+userRouter.put("/updateUserProfile/:id", updateUserProfile);
+userRouter.delete("/deleteUserProfile/:id", deleteUserProfile);
 
 export default userRouter;
