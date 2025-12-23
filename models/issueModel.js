@@ -11,15 +11,18 @@ const issueSchema = new Schema({
     required: true,
   },
   repository: {
-    required: true,
     type: Schema.Types.ObjectId,
     ref: "Repository",
+    required: true,
   },
   status: {
+    type: String,
     required: true,
     enum: ["Open", "Closed"],
     default: "Closed",
   },
 });
 
-export const Issue = mongoose.model("Issue", issueSchema);
+const Issue = mongoose.model("Issue", issueSchema);
+
+export default Issue;

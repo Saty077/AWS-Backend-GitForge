@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
-import { boolean } from "yargs";
 
 const RepositorySchema = new Schema({
   name: {
@@ -17,7 +16,7 @@ const RepositorySchema = new Schema({
     },
   ],
   visibility: {
-    type: boolean,
+    type: Boolean,
     default: true,
   },
   owner: {
@@ -33,4 +32,6 @@ const RepositorySchema = new Schema({
   ],
 });
 
-export const Repository = mongoose.model("Repository", RepositorySchema);
+const Repository = mongoose.model("Repository", RepositorySchema);
+
+export default Repository;
