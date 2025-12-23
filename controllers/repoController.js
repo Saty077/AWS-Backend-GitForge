@@ -35,14 +35,58 @@ export const createRepository = async (req, res) => {
     );
   }
 };
+
 export const getAllRepositories = async (req, res) => {
-  res.send("getAllRepositories called");
+  try {
+    const allRepos = await Repository.find({})
+      .populate("owner")
+      .populate("issues");
+
+    res.json(allRepos);
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Error occured fetching repos: ", err.message);
+  }
 };
+
 export const getRepositoryById = async (req, res) => {
-  res.send("getRepositoryById called");
+  const { id } = req.params;
+  try {
+    if (!id) return res.status(httpStatus.BAD_REQUEST).json("Id not valid");
+
+    const repository = await Repository.find({ _id: id })
+      .populate("owner")
+      .populate("issues");
+
+    if (!repository)
+      return res.status(httpStatus.NOT_FOUND).json("Repository not found!");
+
+    res.status(httpStatus.OK).json(repository);
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Error occured fetching repo: ", err.message);
+  }
 };
 export const getRepositoryByName = async (req, res) => {
-  res.send("getRepositoryByName called");
+  const { name } = req.params;
+  try {
+    if (!name)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json("Please provide a valid name");
+
+    const repository = await Repository.find({ name: name })
+      .populate("owner")
+      .populate("issues");
+
+    if (!repository)
+      return res.status(httpStatus.NOT_FOUND).json("Repository not found!");
+
+    res.status(httpStatus.OK).json(repository);
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Error occured fetching repo: ", err.message);
+  }
 };
 export const getCurrentUserRepository = async (req, res) => {
   res.send("getCurrentUserRepository called");
