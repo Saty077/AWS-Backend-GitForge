@@ -44,13 +44,16 @@ export const signUp = async (req, res) => {
     };
 
     const result = await userCollection.insertOne(newUser);
+    const userId = result.insertedId.toString();
 
-    const token = jwt.sign({ id: result.userId }, process.env.SECRET_KEY, {
+    console.log("incertedId is: ", result.insertedId);
+    console.log("userId with .toString:", userId);
+
+    const token = jwt.sign({ id: userId }, process.env.SECRET_KEY, {
       expiresIn: "1h",
     });
-    console.log(result.userId);
 
-    res.json({ token });
+    res.json({ token, userId: userId });
   } catch (err) {
     console.error("Error occured while signing up", err.message);
     res
@@ -84,11 +87,15 @@ export const login = async (req, res) => {
         .status(httpStatus.BAD_REQUEST)
         .json({ message: "Invalid Credentials" });
 
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+    const userId = user._id.toString();
+    console.log("without converting toString", user._id);
+    console.log("toString", userId);
+
+    const token = jwt.sign({ id: userId }, process.env.SECRET_KEY, {
       expiresIn: "1h",
     });
 
-    res.send({ token, usreId: user._id });
+    res.send({ token, userId: userId });
   } catch (err) {
     console.error("Error logging in: ", err.message);
     res
