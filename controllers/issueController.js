@@ -9,7 +9,7 @@ export const createIssue = async (req, res) => {
   const { id } = req.params;
 
   try {
-    if (title || description || id)
+    if (!title || !description || !id)
       return res
         .status(httpStatus.BAD_REQUEST)
         .json({ message: "Missing required fields!" });
@@ -30,14 +30,70 @@ export const createIssue = async (req, res) => {
 };
 
 export const updateIssueById = async (req, res) => {
-  res.send("updateIssueById Called");
+  const { id } = req.params;
+  const { ...issueData } = req.body;
+  try {
+    if (!id)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Invalid id!" });
+
+    const targetIssue = await Issue.findById(id);
+
+    if (!targetIssue)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "Issue not found!" });
+
+    Object.assign(targetIssue, issueData);
+
+    const updateIssue = await targetIssue.save();
+    res
+      .status(httpStatus.OK)
+      .json({ message: "Issue updated successfully!", issue: updateIssue });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Something went wrong while updating Issue", err.message);
+  }
 };
+
 export const deleteIssueById = async (req, res) => {
-  res.send("DeleteIssueById Called");
+  const { id } = req.params;
+
+  try {
+    if (!id)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Invalid id!" });
+
+    const targetIssue = await Issue.findByIdAndDelete(id);
+
+    if (!targetIssue)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "Issue not found!" });
+
+    res.status(httpStatus.OK).json({ message: "Issue deleted!" });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Something went wrong while deleting Issue", err.message);
+  }
 };
+
 export const getIssueById = async (req, res) => {
-  res.send("getIssueById Called");
+  try {
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Something went wrong while fetching Issue", err.message);
+  }
 };
 export const getAllIssues = async (req, res) => {
-  res.send("getAllIssues Called");
+  try {
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error(
+      "Something went wrong while fetching all Issues",
+      err.message
+    );
+  }
 };
