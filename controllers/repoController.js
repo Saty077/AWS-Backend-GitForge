@@ -67,6 +67,7 @@ export const getRepositoryById = async (req, res) => {
     console.error("Error occured fetching repo: ", err.message);
   }
 };
+
 export const getRepositoryByName = async (req, res) => {
   const { name } = req.params;
   try {
@@ -88,6 +89,7 @@ export const getRepositoryByName = async (req, res) => {
     console.error("Error occured fetching repo: ", err.message);
   }
 };
+
 export const getCurrentUserRepository = async (req, res) => {
   const { userId } = req.user;
   try {
@@ -109,6 +111,7 @@ export const getCurrentUserRepository = async (req, res) => {
     console.error("Error occured fetching repositories: ", err.message);
   }
 };
+
 export const updateRepositoryById = async (req, res) => {
   const { id } = req.params;
   const { description, content } = req.body;
@@ -127,7 +130,7 @@ export const updateRepositoryById = async (req, res) => {
 
     const updatedRepository = await repository.save();
     res.status(httpStatus.OK).json({
-      meassage: "Repository Updated Successfully!",
+      message: "Repository Updated Successfully!",
       repository: updatedRepository,
     });
   } catch (err) {
