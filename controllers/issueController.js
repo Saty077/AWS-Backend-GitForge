@@ -81,14 +81,44 @@ export const deleteIssueById = async (req, res) => {
 };
 
 export const getIssueById = async (req, res) => {
+  const { id } = req.params;
   try {
+    if (!id)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Invalid id!" });
+
+    const targetIssue = await Issue.findById(id);
+
+    if (!targetIssue)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "Issue not found!" });
+
+    res
+      .status(httpStatus.OK)
+      .json({ message: "Issue fetched", issue: targetIssue });
   } catch (err) {
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
     console.error("Something went wrong while fetching Issue", err.message);
   }
 };
+
 export const getAllIssues = async (req, res) => {
+  const { id } = req.params;
+
   try {
+    if (!id)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Repository id required!" });
+    const allIssues = await Issue.find({ repository: id });
+    if (!allIssues || allIssues.length === 0)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "No issue found!" });
+
+    res.status(httpStatus.OK).json(allIssues);
   } catch (err) {
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
     console.error(
