@@ -89,14 +89,97 @@ export const getRepositoryByName = async (req, res) => {
   }
 };
 export const getCurrentUserRepository = async (req, res) => {
-  res.send("getCurrentUserRepository called");
+  const { userId } = req.user;
+  try {
+    if (!userId)
+      return res.status(httpStatus.BAD_REQUEST).json("Invalid current userID!");
+
+    const repositories = await Repository.find({ owner: userId });
+
+    if (!repositories || repositories.length === 0)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ error: "Repository not found!" });
+
+    res
+      .status(httpStatus.OK)
+      .json({ message: "Repositories found!", repositories });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Error occured fetching repositories: ", err.message);
+  }
 };
 export const updateRepositoryById = async (req, res) => {
-  res.send("updateRepositoryById called");
+  const { id } = req.params;
+  const { description, content } = req.body;
+  try {
+    if (!id) return res.status(httpStatus.BAD_REQUEST).json("Invalid Repo Id!");
+
+    const repository = await Repository.findById(id);
+
+    if (!repository)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "Repository not found!" });
+
+    repository.content.push(content);
+    repository.description = description;
+
+    const updatedRepository = await repository.save();
+    res.status(httpStatus.OK).json({
+      meassage: "Repository Updated Successfully!",
+      repository: updatedRepository,
+    });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Error occured updating repository: ", err.message);
+  }
 };
-export const deleteRepositoryById = async (req, res) => {
-  res.send("deleteRepositoryById called");
-};
+
 export const toggleRepositoryById = async (req, res) => {
-  res.send("toggleRepositoryById called");
+  const { id } = req.params;
+  try {
+    if (!id)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .json({ message: "Invalid Repo Id" });
+
+    const repository = await Repository.findById(id);
+    if (!repository)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "Repository not found!" });
+
+    repository.visibility = !repository.visibility;
+
+    const toggledRepository = await repository.save();
+
+    res.status(httpStatus.OK).json({
+      message: "Visibility toggled successfully!",
+      repoVisibility: toggledRepository,
+    });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Error occured toggling repository: ", err.message);
+  }
+};
+
+export const deleteRepositoryById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!id) return res.status(httpStatus.BAD_REQUEST).json("Invalid Repo Id!");
+    const repository = await Repository.findByIdAndDelete(id);
+
+    if (!repository)
+      return res
+        .status(httpStatus.NOT_FOUND)
+        .json({ message: "Repository not found!" });
+
+    res
+      .status(httpStatus.OK)
+      .json({ message: "Repository deleted successfully!" });
+  } catch (err) {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json(err.message);
+    console.error("Error occured deleting repository: ", err.message);
+  }
 };
