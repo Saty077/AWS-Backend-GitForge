@@ -91,7 +91,7 @@ export const getRepositoryByName = async (req, res) => {
 };
 
 export const getCurrentUserRepository = async (req, res) => {
-  const { userId } = req.user;
+  const { userId } = req.params;
   try {
     if (!userId)
       return res.status(httpStatus.BAD_REQUEST).json("Invalid current userID!");
