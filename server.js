@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
 import { Server } from "socket.io";
 import http from "http";
-import mainRouter from "./routes/main.Router.js";
+import mainRouter from "./routes/main.router.js";
 
 import { hideBin } from "yargs/helpers";
 import { initRepo } from "./controllers/init.js";
